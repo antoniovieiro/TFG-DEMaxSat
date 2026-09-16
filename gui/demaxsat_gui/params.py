@@ -26,6 +26,7 @@ class Param:
     kind: str          # "int" | "float" | "choice"
     default: Number    # valor por defecto (igual que en main.c)
     help: str          # texto de ayuda (tooltip)
+    group: str = "algorithm"  # "algorithm" (parametro DeMaxSAT) | "execution" (avanzado)
     minimum: Optional[Number] = None
     maximum: Optional[Number] = None
     decimals: int = 2  # solo para "float"
@@ -36,56 +37,59 @@ class Param:
 # Orden y valores por defecto tomados de main.c (lineas 36-64 y 152-160).
 PARAMS: List[Param] = [
     Param(
-        name="gens", flag="gens", label="Generaciones (gens)", kind="int",
-        default=-1, minimum=-1, maximum=2_147_483_647, step=1,
-        help="Numero maximo de generaciones. Sin limite = -1. Por defecto = -1.\n"
-             "Con -1 el solver corre indefinidamente: usa 'Parar' para obtener "
-             "la solucion.",
+        name="gens", flag="gens", label="Generaciones (GEN)", kind="int",
+        group="algorithm", default=-1, minimum=-1, maximum=2_147_483_647, step=1,
+        help="Numero maximo de generaciones (GEN). Sin limite = -1. Por defecto = -1.\n"
+             "Con -1 el solver corre indefinidamente: usa 'Parar' o un timeout para "
+             "obtener la solucion.",
     ),
     Param(
-        name="pop", flag="pop", label="Poblacion (pop)", kind="int",
-        default=100, minimum=1, maximum=1_000_000, step=1,
-        help="Tamano de la poblacion. Por defecto = 100.",
+        name="pop", flag="pop", label="Poblacion (NP)", kind="int",
+        group="algorithm", default=100, minimum=1, maximum=1_000_000, step=1,
+        help="Tamano de la poblacion (NP). Por defecto = 100.",
     ),
     Param(
-        name="cr", flag="cr", label="Cruce (cr)", kind="float",
-        default=0.4, minimum=0.0, maximum=1.0, decimals=2, step=0.05,
-        help="Probabilidad de cruce (crossover). Por defecto = 0.40.",
+        name="cr", flag="cr", label="Cruce (CR)", kind="float",
+        group="algorithm", default=0.4, minimum=0.0, maximum=1.0, decimals=2, step=0.05,
+        help="Probabilidad de cruce / crossover (CR). Por defecto = 0.40.",
     ),
     Param(
-        name="f", flag="f", label="Mutacion (f)", kind="float",
-        default=0.6, minimum=0.0, maximum=1.0, decimals=2, step=0.05,
-        help="Probabilidad de mutacion. Por defecto = 0.60.",
+        name="f", flag="f", label="Mutacion (F)", kind="float",
+        group="algorithm", default=0.6, minimum=0.0, maximum=1.0, decimals=2, step=0.05,
+        help="Probabilidad de mutacion (F). Por defecto = 0.60.",
     ),
     Param(
-        name="lss", flag="lss", label="Pasos busqueda local (lss)", kind="float",
-        default=0.01, minimum=0.0, maximum=1.0, decimals=4, step=0.01,
-        help="Numero de pasos de busqueda local, como porcentaje del numero de "
+        name="lss", flag="lss", label="Busqueda local (LSS)", kind="float",
+        group="algorithm", default=0.01, minimum=0.0, maximum=1.0, decimals=4, step=0.01,
+        help="Pasos de busqueda local (LSS), como porcentaje del numero de "
              "variables. Por defecto = 0.01.",
     ),
     Param(
-        name="maxlss", flag="maxlss", label="Max. LSS (maxlss)", kind="int",
-        default=100, minimum=-1, maximum=2_147_483_647, step=1,
-        help="Maximo de pasos de busqueda local en cada llamada a las "
-             "heuristicas. Sin limite = -1. Por defecto = 100.",
-    ),
-    Param(
-        name="seed", flag="seed", label="Semilla (seed)", kind="int",
-        default=-1, minimum=-1, maximum=2_147_483_647, step=1,
-        help="Semilla de numeros aleatorios. Aleatoria = -1. Por defecto = -1.",
-    ),
-    Param(
-        name="rw", flag="rw", label="RandomWalk (rw)", kind="float",
-        default=0.5, minimum=0.0, maximum=1.0, decimals=2, step=0.05,
-        help="Probabilidad de RandomWalk. Probabilidad de GSAT = (1 - rw). "
+        name="rw", flag="rw", label="Prob. RandomWalk (PRW)", kind="float",
+        group="algorithm", default=0.5, minimum=0.0, maximum=1.0, decimals=2, step=0.05,
+        help="Probabilidad de RandomWalk (PRW). Probabilidad de GSAT = (1 - PRW). "
              "Por defecto = 0.50.",
     ),
     Param(
-        name="hscope", flag="hscope", label="Ambito heuristicas (hscope)",
-        kind="choice", default=0,
+        name="hscope", flag="hscope", label="Ambito heuristicas (HSCOPE)",
+        kind="choice", group="algorithm", default=0,
         choices=["all", "better_than_mean", "best"],
-        help="Individuos afectados por la busqueda local: all, better_than_mean "
-             "o best. Por defecto = all.",
+        help="Individuos afectados por la busqueda local (HSCOPE): all, "
+             "better_than_mean o best. Por defecto = all.\n"
+             "Nota: 'best' existe en la implementacion pero no se evalua en el paper.",
+    ),
+    Param(
+        name="maxlss", flag="maxlss", label="Max. LSS (maxlss)", kind="int",
+        group="execution", default=100, minimum=-1, maximum=2_147_483_647, step=1,
+        help="Tope de pasos de busqueda local por llamada a las heuristicas. "
+             "Sin limite = -1. Por defecto = 100.\n"
+             "Opcion de la implementacion (no aparece en el paper).",
+    ),
+    Param(
+        name="seed", flag="seed", label="Semilla (seed)", kind="int",
+        group="execution", default=-1, minimum=-1, maximum=2_147_483_647, step=1,
+        help="Semilla de numeros aleatorios. Aleatoria = -1. Por defecto = -1.\n"
+             "Opcion de reproducibilidad (no es un parametro del paper).",
     ),
 ]
 
